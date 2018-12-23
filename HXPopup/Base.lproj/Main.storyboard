@@ -19,20 +19,39 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lQI-Ud-W59">
-                                <rect key="frame" x="164.5" y="318.5" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="131" y="318.5" width="113" height="30"/>
+                                <state key="normal" title="Show Xib Popup"/>
                                 <connections>
                                     <action selector="onButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DC7-y7-O16"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Popup counter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FdX-aE-loC">
+                                <rect key="frame" x="131" y="108" width="113" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T2K-Tn-20r">
+                                <rect key="frame" x="182.5" y="145" width="10.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="T2K-Tn-20r" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="AkX-vX-hIe"/>
+                            <constraint firstItem="T2K-Tn-20r" firstAttribute="top" secondItem="FdX-aE-loC" secondAttribute="bottom" constant="16" id="Hi3-Nf-rN3"/>
                             <constraint firstItem="lQI-Ud-W59" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Vle-Hl-JNW"/>
                             <constraint firstItem="lQI-Ud-W59" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="oKP-b2-pXf"/>
+                            <constraint firstItem="FdX-aE-loC" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="od0-m7-LEA"/>
+                            <constraint firstItem="FdX-aE-loC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="88" id="u7x-Uh-S5t"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="popupCounterLabel" destination="T2K-Tn-20r" id="7bq-Nk-3nL"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

@@ -45,7 +45,9 @@ class HXBasePopupViewController: UIViewController
     
     var animatedPresentation = true
     var animatedDismissal = true
-    var backgroundViewColor = UIColor(white: 0, alpha: 0.9)
+    
+    var backgroundViewColor = UIColor(white: 0, alpha: 0.9) { didSet { backgroundView?.backgroundColor = backgroundViewColor } }
+    var popupViewCornerRadius: CGFloat = 6.0 { didSet { popupRootView?.layer.cornerRadius = popupViewCornerRadius } }
     
     // MARK: - Public API
     
@@ -76,7 +78,9 @@ class HXBasePopupViewController: UIViewController
             
             self.show(popupView: self.popupRootView, animated: self.animatedPresentation, completion:
             {
-                
+                [weak self] in guard let self = self else { return }
+                self.presenting = false
+                self.onPresentationCompleted()
             })
         }
     }
@@ -87,7 +91,9 @@ class HXBasePopupViewController: UIViewController
         
         self.hide(backgroundView: self.backgroundView, animated: self.animatedPresentation, completion:
         {
-                
+            [weak self] in guard let self = self else { return }
+            self.dismissing = false
+            self.onDismissCompleted()
         })
         
         self.hide(popupView: popupRootView, animated: self.animatedPresentation, completion:
@@ -98,29 +104,52 @@ class HXBasePopupViewController: UIViewController
     
     // MARK: - Presentation logic
     
-    func show(backgroundView: UIView?, animated: Bool, completion: ()->())
+    func show(backgroundView: UIView?, animated: Bool, completion: @escaping ()->())
     {
+        backgroundView?.alpha = 0
+        backgroundView?.isHidden = false
+        
         if !animatedPresentation
         {
             backgroundView?.alpha = 1
-            backgroundView?.isHidden = false
-            return
-        }
-    }
-    
-    func show(popupView: UIView?, animated: Bool, completion: ()->())
-    {
-        if !animatedPresentation
-        {
-            popupView?.alpha = 1
-            popupView?.isHidden = false
-            presenting = false
-            onPresentationCompleted()
             return
         }
         
-        presenting = false
-        onPresentationCompleted()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations:
+        {
+            backgroundView?.alpha = 1
+        })
+        { (finished) in
+            completion()
+        }
+    }
+    
+    func show(popupView: UIView?, animated: Bool, completion: @escaping ()->())
+    {
+        popupView?.alpha = 0
+        popupView?.isHidden = false
+        
+        if !animatedPresentation
+        {
+            popupView?.alpha = 1
+            completion()
+            return
+        }
+        
+        popupView?.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        
+        UIView.animate(withDuration: 0.4, delay: 0.1, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseIn, animations:
+        {
+            popupView?.transform = .identity
+        })
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations:
+        {
+            popupView?.alpha = 1
+        })
+        { (finished) in
+            completion()
+        }
     }
     
     func onPresentationCompleted()
@@ -130,22 +159,27 @@ class HXBasePopupViewController: UIViewController
     
     // MARL: - Dismissal logic
     
-    func hide(backgroundView: UIView?, animated: Bool, completion: ()->())
+    func hide(backgroundView: UIView?, animated: Bool, completion: @escaping ()->())
     {
         if !animatedPresentation
         {
             backgroundView?.alpha = 0
             backgroundView?.isHidden = true
-            dismissing = false
-            onDismissCompleted()
+            completion()
             return
         }
         
-        dismissing = false
-        onDismissCompleted()
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations:
+        {
+            backgroundView?.alpha = 0
+        })
+        { (finished) in
+            backgroundView?.isHidden = true
+            completion()
+        }
     }
     
-    func hide(popupView: UIView?, animated: Bool, completion: ()->())
+    func hide(popupView: UIView?, animated: Bool, completion: @escaping ()->())
     {
         if !animatedPresentation
         {
@@ -154,8 +188,19 @@ class HXBasePopupViewController: UIViewController
             return
         }
         
-        dismissing = false
-        onDismissCompleted()
+        UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseIn, animations:
+        {
+            popupView?.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        })
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations:
+        {
+            popupView?.alpha = 0
+        })
+        { (finished) in
+            popupView?.isHidden = true
+            completion()
+        }
     }
     
     func onDismissCompleted()
@@ -166,10 +211,12 @@ class HXBasePopupViewController: UIViewController
     // MARK: - Setup
     
     var backgroundViewTapRecognizer: SwiftyTapGestureRecognizer?
-    private func setupBackground()
+    func setupBackground()
     {
         backgroundView = UIView()
         backgroundView!.backgroundColor = backgroundViewColor
+        backgroundView?.alpha = 0
+        backgroundView?.isHidden = true
         
         backgroundView!.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(backgroundView!, at: 0)
@@ -188,6 +235,12 @@ class HXBasePopupViewController: UIViewController
         }
     }
     
+    func setupPopupView()
+    {
+        popupRootView?.alpha = 0
+        popupRootView?.isHidden = true
+        popupRootView?.layer.cornerRadius = popupViewCornerRadius
+    }
     
     // MARK: - Lifecycle
     
@@ -197,6 +250,7 @@ class HXBasePopupViewController: UIViewController
 
         view.backgroundColor = .clear
         setupBackground()
+        setupPopupView()
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -227,7 +281,8 @@ class HXBasePopupViewController: UIViewController
         customInit()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder)
+    {
         fatalError("init(coder:) has not been implemented")
     }
     

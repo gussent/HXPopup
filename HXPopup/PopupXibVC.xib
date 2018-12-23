@@ -31,8 +31,8 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iRw-nM-50t">
-                            <rect key="frame" x="136.5" y="117" width="46" height="30"/>
-                            <state key="normal" title="Button"/>
+                            <rect key="frame" x="113" y="117" width="93" height="30"/>
+                            <state key="normal" title="Action button"/>
                             <connections>
                                 <action selector="onButton:" destination="-1" eventType="touchUpInside" id="rZj-db-lLJ"/>
                             </connections>
